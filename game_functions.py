@@ -1,4 +1,6 @@
 import sys
+from time import sleep
+
 import pygame
 
 from bullet import Bullet
@@ -74,6 +76,7 @@ def update_screen(ai_settings,screen,ship,aliens,bullets):
 	#重新绘制屏幕时颜色需要跟进
 	screen.fill(ai_settings.bg_color)
 	
+	#更新屏幕时需要将飞船和外星人同时更新
 	ship.blitme()
 	aliens.draw(screen)
 	
@@ -84,7 +87,7 @@ def update_screen(ai_settings,screen,ship,aliens,bullets):
 	#最近绘制的屏幕可见(时时刷新屏幕)
 	pygame.display.flip()
 	
-def update_bullets(bullets):
+def update_bullets(ai_settings,screen,ship,aliens,bullets):
 	
 	#更新子弹位置
 	bullets.update()
@@ -100,6 +103,20 @@ def update_bullets(bullets):
 			# ~ bullets.remove(bullet)
 	#print(len(bullets))
 	
+	check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets)
+	
+	
+		
+#检测碰撞,碰撞即删除
+def check_bullet_alien_collisions(ai_settings,screen,ship,aliens,bullets):
+	
+	collisions = pygame.sprite.groupcollide(bullets,aliens,True,True)
+	
+	if len(aliens) == 0:
+		bullets.empty()
+		create_fleet(ai_settings,screen,ship,aliens)
+		
+		
 
 def create_fleet(ai_settings,screen,ship,aliens):
 	#初始化外星人
@@ -114,7 +131,8 @@ def create_fleet(ai_settings,screen,ship,aliens):
 	
 	#逐行,逐列创建外星人
 	for row_number in range(number_rows):
-		random_num=randint(0,int(number_aliens_x))
+		#每行随机创建至少1个外星人
+		random_num=randint(1,int(number_aliens_x))
 		for alien_number in range(random_num):
 			create_alien(ai_settings,screen,aliens,alien_number,row_number)
 		
@@ -146,7 +164,73 @@ def get_number_rows(ai_settings,ship_height,alien_height):
 	return number_rows
 	
 
-def update_aliens(aliens):
+def update_aliens(ai_settings,stats,screen,ship,aliens,bullets):
+	
+	check_fleet_edges(ai_settings,aliens)
 	aliens.update()
+	
+	for alien in aliens.copy():
+		if alien.rect.top >= ai_settings.screen_height:
+			aliens.remove(alien)
+			#create_fleet(ai_settings,screen,ship,aliens)
+			
+	#碰撞结束游戏
+	if pygame.sprite.spritecollideany(ship,aliens):
+		ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
+	
+	
+	
 
+
+def check_fleet_edges(ai_settings,aliens):
+	for alien in aliens.sprites():
+		#若触变,执行换方向
+		if alien.check_edge():
+			change_fleet_direction(ai_settings,aliens)
+			break
+
+
+def change_fleet_direction(ai_settings,aliens):
+	#触变外星人乡下坠落,反向横移
+	for alien in aliens.sprites():
+		alien.rect.y += ai_settings.fleet_drop_speed
+	ai_settings.fleet_direction *= -1
+	
+
+
+#飞船击中后
+def ship_hit(ai_settings,stats,screen,ship,aliens,bullets):
+	
+	if stats.ships_left > 0:
+		#船命-1
+		stats.ships_left -= 1
+		
+		#清空数据
+		aliens.empty()
+		bullets.empty()
+		
+		#创建新外星人,飞船归位
+		create_fleet(ai_settings,screen,ship,aliens)
+		ship.center_ship()
+		
+		#暂停
+		sleep(0.5)
+		
+	else:
+		stats.game_active = False
+	
+	
+def check_aliens_bottom(ai_settings,stats,screen,ship,aliens,bullets):
+	screen_rect = screen.get_rect()
+	for alien in aliens.sprites():
+		if alien.rect.bottom >= screen_rect.bottom:
+			#若触底,则算失败,重新开始
+			ship_hit(ai_settings,stats,screen,ship,aliens,bullets)
+
+	
+	
+	
+	
+
+	
 

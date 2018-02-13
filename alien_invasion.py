@@ -8,6 +8,8 @@ from settings import Settings
 #导入飞船
 from ship import Ship
 from alien import Alien
+#导入统计
+from game_stats import GameStats
 
 import game_functions as gf
 
@@ -23,6 +25,9 @@ def run_game():
 		
 	pygame.display.set_caption("Alien Invasion")
 	
+	#生成统计类
+	stats = GameStats(ai_settings)
+	
 	#生成新飞船
 	ship=Ship(ai_settings,screen)
 	
@@ -30,7 +35,7 @@ def run_game():
 	bullets = Group()
 	aliens = Group()
 	
-	#生成外星人,组
+	#生成外星人组
 	alien = Alien(ai_settings,screen)
 	gf.create_fleet(ai_settings,screen,ship,aliens)
 	
@@ -39,19 +44,19 @@ def run_game():
 		
 		#调取监视事件
 		gf.check_events(ai_settings,screen,ship,bullets)
-		#更新飞船位置
-		ship.update()
 		
-		#更新子弹
-		gf.update_bullets(bullets)
-		
-		#更新外星人
-		gf.update_aliens(aliens)
+		if stats.game_active:
+			#更新飞船位置
+			ship.update()
+			
+			#更新子弹
+			gf.update_bullets(ai_settings,screen,ship,aliens,bullets)
+			
+			#更新外星人
+			gf.update_aliens(ai_settings,stats,screen,ship,aliens,bullets)
 		
 		#刷新屏幕
 		gf.update_screen(ai_settings,screen,ship,aliens,bullets)
 		
 		
-		
-
 run_game()

@@ -16,8 +16,8 @@ class Ship():
 		
 		#飞船初始位置设置(x轴居中,y轴位于窗口底部)
 		self.rect.centerx=self.screen_rect.centerx
-		#self.rect.bottom=self.screen_rect.bottom
-		self.rect.centery=self.screen_rect.centery
+		self.rect.bottom=self.screen_rect.bottom
+		#self.rect.centery=self.screen_rect.centery
 		
 		#储存飞机的位置,用float
 		self.center_x=float(self.rect.centerx)
@@ -36,11 +36,13 @@ class Ship():
 		if self.moving_left and self.rect.left > 0:
 			self.center_x -= self.ai_settings.ship_speed_factor
 			
-		if self.moving_up and self.rect.top > 0:
-			self.center_y -= self.ai_settings.ship_speed_factor
+		
+		#前后移动,注意窗口的左上角坐标为(0,0)
+		# ~ if self.moving_up and self.rect.top > 0:
+			# ~ self.center_y -= self.ai_settings.ship_speed_factor
 			
-		if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
-			self.center_y += self.ai_settings.ship_speed_factor
+		# ~ if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
+			# ~ self.center_y += self.ai_settings.ship_speed_factor
 			
 		#根据center设定rect
 		self.rect.centerx=self.center_x
@@ -49,6 +51,9 @@ class Ship():
 	def blitme(self):
 		#指定位置画飞船
 		self.screen.blit(self.image,self.rect)
+		
+	def center_ship(self):
+		self.center = self.screen_rect.centerx
 		
 	
 		
