@@ -10,6 +10,8 @@ from ship import Ship
 from alien import Alien
 #导入统计
 from game_stats import GameStats
+#导入按钮
+from button import Button
 
 import game_functions as gf
 
@@ -24,6 +26,9 @@ def run_game():
 		(ai_settings.screen_width,ai_settings.screen_height))
 		
 	pygame.display.set_caption("Alien Invasion")
+	
+	#创建play按钮
+	play_button = Button(ai_settings,screen,"Play")
 	
 	#生成统计类
 	stats = GameStats(ai_settings)
@@ -43,7 +48,7 @@ def run_game():
 	while True:
 		
 		#调取监视事件
-		gf.check_events(ai_settings,screen,ship,bullets)
+		gf.check_events(ai_settings,screen,stats,play_button,ship,aliens,bullets)
 		
 		if stats.game_active:
 			#更新飞船位置
@@ -56,7 +61,7 @@ def run_game():
 			gf.update_aliens(ai_settings,stats,screen,ship,aliens,bullets)
 		
 		#刷新屏幕
-		gf.update_screen(ai_settings,screen,ship,aliens,bullets)
+		gf.update_screen(ai_settings,screen,stats,ship,aliens,bullets,play_button)
 		
 		
 run_game()
