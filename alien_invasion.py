@@ -7,9 +7,12 @@ from pygame.sprite import Group
 from settings import Settings
 #导入飞船
 from ship import Ship
+#导入外星人
 from alien import Alien
 #导入统计
 from game_stats import GameStats
+#导入计分板
+from scoreboard import Scoreboard
 #导入按钮
 from button import Button
 
@@ -33,6 +36,9 @@ def run_game():
 	#生成统计类
 	stats = GameStats(ai_settings)
 	
+	#生成计分板
+	sb = Scoreboard(ai_settings,screen,stats)
+	
 	#生成新飞船
 	ship=Ship(ai_settings,screen)
 	
@@ -48,20 +54,21 @@ def run_game():
 	while True:
 		
 		#调取监视事件
-		gf.check_events(ai_settings,screen,stats,play_button,ship,aliens,bullets)
+		gf.check_events(ai_settings,screen,stats,sb,play_button,ship,aliens,bullets)
 		
 		if stats.game_active:
 			#更新飞船位置
 			ship.update()
 			
 			#更新子弹
-			gf.update_bullets(ai_settings,screen,ship,aliens,bullets)
+			gf.update_bullets(ai_settings,screen,stats,sb,ship,aliens,bullets)
 			
 			#更新外星人
 			gf.update_aliens(ai_settings,stats,screen,ship,aliens,bullets)
 		
 		#刷新屏幕
-		gf.update_screen(ai_settings,screen,stats,ship,aliens,bullets,play_button)
+		gf.update_screen(ai_settings,screen,stats,sb,ship,aliens,bullets,play_button)
+		
 		
 		
 run_game()
