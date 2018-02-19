@@ -1,9 +1,11 @@
 import pygame
+from pygame.sprite import Sprite
 
-class Ship():
+class Ship(Sprite):
 	
 	#初始化位置
 	def __init__(self,ai_settings,screen):
+		super().__init__()
 		self.screen=screen
 		
 		#加载图像
