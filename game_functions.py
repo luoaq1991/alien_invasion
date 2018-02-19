@@ -205,6 +205,11 @@ def check_bullet_alien_collisions(ai_settings,screen,stats,sb,ship,aliens,bullet
 			sb.prep_score()
 		check_high_score(stats,sb)
 	
+	start_new_level(ai_settings,screen,stats,sb,ship,aliens,bullets)
+	
+		
+
+def start_new_level(ai_settings,screen,stats,sb,ship,aliens,bullets):
 	#若外星人被全部消灭，则清空子弹，加快游戏速度，并生成新的外星人。
 	if len(aliens) == 0:
 		bullets.empty()
@@ -214,8 +219,9 @@ def check_bullet_alien_collisions(ai_settings,screen,stats,sb,ship,aliens,bullet
 		stats.level += 1
 		sb.prep_level()
 		create_fleet(ai_settings,screen,ship,aliens)
-		
-		
+
+
+
 
 def create_fleet(ai_settings,screen,ship,aliens):
 	#初始化外星人
